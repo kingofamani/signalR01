@@ -14,8 +14,13 @@
         //signalR啟動完成後，要執行的動作
         $.connection.hub.start().done(function () {
             $('#btnSend').click(function () {
-                //Client端呼叫Server端
-                chat.server.send($('#txtMsg').val());//send要小寫
+                send();
+            });
+
+            $('#txtMsg').keydown(function (e) {
+                if (e.which == 13) {
+                    send();
+                }
             });
         });
 
@@ -23,6 +28,12 @@
         chat.client.show = function (message) {
             $('#chatRoom').append('<li>' + message + '</li>');
         };
+
+        function send() {
+            //Client端呼叫Server端
+            chat.server.send($('#txtMsg').val());//send要小寫
+            $('#txtMsg').val('');//清除輸入框
+        }
 
     </script>
 
