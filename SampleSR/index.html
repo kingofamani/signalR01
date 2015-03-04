@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <script src="Scripts/jquery-1.6.4.min.js"></script>
+    <script src="Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="signalR/hubs"></script>
+</head>
+<body>
+    <script>
+        var chat = $.connection.chatHub;//chatHub小寫
+
+        //signalR啟動完成後，要執行的動作
+        $.connection.hub.start().done(function () {
+            $('#btnSend').click(function () {
+                //Client端呼叫Server端
+                chat.server.send($('#txtMsg').val());//send要小寫
+            });
+        });
+
+        //Client端供Server端呼叫的方法
+        chat.client.show = function (message) {
+            $('#chatRoom').append('<li>' + message + '</li>');
+        };
+
+    </script>
+
+    <input id="txtMsg" type="text" />
+    <input id="btnSend" type="button" value="傳送" />
+    <ul id="chatRoom"></ul>
+</body>
+</html>
