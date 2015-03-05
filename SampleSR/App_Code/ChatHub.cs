@@ -12,6 +12,35 @@ public class ChatHub : Hub
     {
         public static Dictionary<string, string> ConnectionIds = new Dictionary<string, string>();
     }
+    
+    //儲存上一個加入的群組
+    public static string OriginGroup = string.Empty;
+
+    //加群組(只能在一個群組)
+    public Task JoinOnlyOneGroup(string groupId)
+    {
+        Groups.Remove(Context.ConnectionId, OriginGroup);
+        OriginGroup = groupId;
+        return Groups.Add(Context.ConnectionId, groupId);
+    }
+    //加群組(可多個群組)
+    public Task JoinGroup(string groupId)
+    {
+        OriginGroup = groupId;
+        return Groups.Add(Context.ConnectionId, groupId);
+    }
+    //退群組
+    public Task LeaveGroup(string groupId)
+    {
+        return Groups.Remove(Context.ConnectionId, groupId);
+    }
+    //傳送訊息給群組
+    public void SendGroup(string groupId, string message)
+    {
+        var user = Users.ConnectionIds.Where(u => u.Key == Context.ConnectionId).FirstOrDefault();
+        Clients.Group(groupId).show(user.Value + "說：" + message);
+    }
+    
 
     //傳送訊息給所有User
     public void Send(string message)
@@ -24,8 +53,6 @@ public class ChatHub : Hub
     public void SendOne(string id, string message)
     {
         var from = Users.ConnectionIds.Where(u => u.Key == Context.ConnectionId).FirstOrDefault();
-        //var to = Users.ConnectionIds.Where(u => u.Key == id).FirstOrDefault();
-
         Clients.Client(id).show("<span style='color:red'>" + from.Value + "密你:" + message + "</span>");
     }
 

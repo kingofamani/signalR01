@@ -15,7 +15,8 @@
 
         //初始
         $(function () {
-            name = window.prompt("請輸入姓名:");            
+            //name = window.prompt("請輸入姓名:");   
+            name = Math.floor(Math.random() * 10000 + 1) + "用戶";
         });
 
         //signalR啟動完成後，要執行的動作
@@ -24,26 +25,44 @@
             //通知Server，有新使用者連進來
             chat.server.userConnected(name);
 
+            //預設進入大廳
+            chat.server.joinGroup("001");
+
             //按傳送鈕
             $('#btnSend').click(function () {
-                send();
+                //send();
+                sendGroup();
             });
             //按Enter鍵
             $('#txtMsg').keydown(function (e) {
                 if (e.which == 13) {
-                    send();
+                    //send();
+                    sendGroup();
                 }
             });
 
             //選取某一個使用者
             //★用 $("#lstUser li").click()會抓不到
-            $("#lstUser li").live("click", function () {                
+            //$("#lstUser li").live("click", function () {                
+            //    var name = $(this).html();
+            //    var id = $(this).attr('id');
+
+            //    $('#lblTalkToWho').html(name);
+            //    $('#lblTalkToWhoId').html(id);                
+            //});
+
+            //選取某一個聊天房
+            $('#lstGroup li').click(function () {
+                //改群組的顯示名稱
                 var name = $(this).html();
                 var id = $(this).attr('id');
+                $('#lblGroup').html(name);
+                $('#lblGroupId').html(id);
 
-                $('#lblTalkToWho').html(name);
-                $('#lblTalkToWhoId').html(id);                
+                //通知Server加入群組
+                chat.server.joinOnlyOneGroup(id);
             });
+
         });
                 
         //顯示訊息
@@ -66,21 +85,37 @@
         };
 
         //傳送聊天內容至Server
-        function send() {
-            var id = $('#lblTalkToWhoId').text();
+        //function send() {
+        //    var id = $('#lblTalkToWhoId').text();
 
-            if (id == "all") {
-                chat.server.send($('#txtMsg').val());
-            } else {
-                chat.server.sendOne(id,$('#txtMsg').val());
-            }
+        //    if (id == "all") {
+        //        chat.server.send($('#txtMsg').val());
+        //    } else {
+        //        chat.server.sendOne(id,$('#txtMsg').val());
+        //    }
             
+        //    $('#txtMsg').val('');
+        //}
+
+        function sendGroup() {
+            var id = $('#lblGroupId').text();
+            var message = $('#txtMsg').val();
+            chat.server.sendGroup(id,message);
             $('#txtMsg').val('');
         }
 
     </script>
 
-    <div style="width:500px;">
+    <div style="width:700px;">
+        <div style="float: left; overflow: scroll; width: 200px; height: 300px">
+            <p>聊天房</p>
+            <ul id="lstGroup">
+                <li id="001">大廳</li>
+                <li id="002"><span style="background-color:orange;color:white;">橘館</span></li>
+                <li id="003"><span style="background-color: purple; color: white;">紫館</span></li>
+            </ul>
+        </div>
+
         <div style="float: left; overflow: scroll; width: 300px; height: 300px">
             <p>聊天室</p>
             <ul id="chatRoom"></ul>
@@ -93,6 +128,8 @@
         </div>
 
         <div>
+            <label id="lblGroup">大廳</label>
+            <label id="lblGroupId" hidden>001</label>
             <label id="lblTalkToWho">所有人</label>
             <label id="lblTalkToWhoId" hidden>all</label>
             <input id="txtMsg" type="text" />
