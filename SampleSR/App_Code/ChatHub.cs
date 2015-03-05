@@ -20,6 +20,15 @@ public class ChatHub : Hub
         Clients.All.show(user.Value + "說：" + message);
     }  
 
+    //傳送訊息給某人
+    public void SendOne(string id, string message)
+    {
+        var from = Users.ConnectionIds.Where(u => u.Key == Context.ConnectionId).FirstOrDefault();
+        //var to = Users.ConnectionIds.Where(u => u.Key == id).FirstOrDefault();
+
+        Clients.Client(id).show("<span style='color:red'>" + from.Value + "密你:" + message + "</span>");
+    }
+
     //新使用者連線進入聊天室
     public void userConnected(string name)
     {

@@ -34,6 +34,16 @@
                     send();
                 }
             });
+
+            //選取某一個使用者
+            //★用 $("#lstUser li").click()會抓不到
+            $("#lstUser li").live("click", function () {                
+                var name = $(this).html();
+                var id = $(this).attr('id');
+
+                $('#lblTalkToWho').html(name);
+                $('#lblTalkToWhoId').html(id);                
+            });
         });
                 
         //顯示訊息
@@ -43,7 +53,7 @@
 
         //顯示user清單
         chat.client.getList = function (users) {
-            var li = "";
+            var li = "<li id=all>所有人</li>";
             $.each(users, function (i, user) {
                 li += '<li id='+user.id+' >' +user.name+ '</li>'
             });
@@ -55,8 +65,16 @@
             $('#' + id).remove();
         };
 
+        //傳送聊天內容至Server
         function send() {
-            chat.server.send($('#txtMsg').val());
+            var id = $('#lblTalkToWhoId').text();
+
+            if (id == "all") {
+                chat.server.send($('#txtMsg').val());
+            } else {
+                chat.server.sendOne(id,$('#txtMsg').val());
+            }
+            
             $('#txtMsg').val('');
         }
 
@@ -70,10 +88,13 @@
 
         <div style="float: left; overflow: scroll; width: 200px; height: 300px">
             <p>使用者列表</p>
-            <ul id="lstUser"></ul>
+            <ul id="lstUser">
+            </ul>
         </div>
 
         <div>
+            <label id="lblTalkToWho">所有人</label>
+            <label id="lblTalkToWhoId" hidden>all</label>
             <input id="txtMsg" type="text" />
             <input id="btnSend" type="button" value="傳送" />
         </div>
