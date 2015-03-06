@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <script src="Scripts/jquery-1.6.4.min.js"></script>
+    <script src="Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="signalR/hubs"></script>
+</head>
+<body>
+    <script>
+
+        var chat = $.connection.chatHub;//chatHub小寫
+        var name = "";
+        var x = 0;
+        var y = 0;
+        var count = 0;
+
+        //初始
+        $(function () {            
+            name = Math.floor(Math.random() * 10000 + 1) + "用戶";
+
+            $(document)
+                .mousemove(function (e) {
+                    //移動位置
+                    x=e.pageX;
+                    y=e.pageY;
+                    $("#divMe").parent().css({ position: 'relative' });
+                    $("#divMe").css({ top: y-15, left: x, position: 'absolute' });
+                    //傳送座標、點擊次數至Server
+                    sendGame();                    
+                })
+                .click(function () {
+                    //點擊次數
+                    count += 1;
+                    sendGame();
+                });
+        });
+
+        //signalR啟動完成後，要執行的動作
+        $.connection.hub.start().done(function () {
+            //遊戲初始
+            chat.server.gameConnected(name);
+        });
+
+        //顯示遊戲訊息
+        //★Server傳參方法一：用LINQ
+        chat.client.game = function (users) {
+            $("#divRoom").empty();
+            $.each(users, function (id, user) {
+                if (user.name != name) {//自己不顯示
+                    var newDiv = $("<div id="+id+">" + user.name + ":" + user.count + "下" + "</div>");
+                    newDiv.parent().css({ position: 'relative' });
+                    newDiv.css({ top: user.y, left: user.x, position: 'absolute' });
+
+                    $("#divRoom").append(newDiv);
+                }
+            });
+        }
+
+        //★Server傳參方法二：用JSON
+        //chat.client.game2 = function (users) {
+        //    var json = JSON.parse(users);
+        //    console.log(json);
+
+        //    $("#divRoom").empty();
+        //    $.each(json, function (id, user) {
+        //        if (user.name != name) {//自己不顯示
+        //            var newDiv = $("<div id=" + id + ">" + user.name + ":" + user.count + "下" + "</div>");
+        //            newDiv.parent().css({ position: 'relative' });
+        //            newDiv.css({ top: user.y, left: user.x, position: 'absolute' });
+
+        //            $("#divRoom").append(newDiv);
+        //        }
+        //    });
+        //}
+
+        //傳送座標、點擊次數至Server
+        function sendGame() {
+            //顯示座標
+            $("#divMe").text(name + ":" + count + "下");
+            //送至遠端
+            var info = {};
+            info.name = name;
+            info.x = x;
+            info.y = y;
+            info.count = count;
+            chat.server.game(info);
+        }
+        
+        //使用者離開
+        chat.client.removeList = function (id) {
+            $('#' + id).remove();
+        };
+
+
+    </script>
+
+    <div style="width:700px;">
+
+        <div id="divRoom"></div>
+
+        <div id="divMe" style="background-color:yellow;"></div>
+    </div>
+    
+</body>
+</html>
