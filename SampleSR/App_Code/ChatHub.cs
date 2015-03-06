@@ -9,6 +9,9 @@ using System.Runtime.Serialization.Formatters;
 
 public class ChatHub : Hub
 {
+    //過關點擊次數
+    public const int PASS_COUNTS = 10;
+
     //宣告靜態類別，儲存user清單
     public static class Users
     {
@@ -41,6 +44,20 @@ public class ChatHub : Hub
         }
 
         Clients.Others.game(Users.ConnectionIds.Select(u => new { id = u.Key, name = u.Value.name, x = u.Value.x, y = u.Value.y, count = u.Value.count }).ToList());//用Others，自己不用更新座標，更具即時性
+
+        //判斷是否過關
+        if (user.count == PASS_COUNTS)
+        {
+            
+            //清除遊戲分數
+            foreach (KeyValuePair<string, Users.Info> u in Users.ConnectionIds)
+            {
+                Users.ConnectionIds[u.Key].count = 0;
+            }
+
+            //通知玩家過關
+            Clients.All.pass(user.name, Users.ConnectionIds.Select(u => new { id = u.Key, name = u.Value.name, x = u.Value.x, y = u.Value.y, count = u.Value.count }).ToList());
+        }
     }
 
     //★傳參至Client方法二：用JSON

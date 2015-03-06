@@ -75,6 +75,20 @@
         //    });
         //}
 
+        //是否過關
+        chat.client.pass = function (winner, users) {
+            count = 0;
+            $("#divPass").css('visibility', 'visible');
+            $("#divPass").html("恭喜玩家「" + winner + "」過關！");
+
+            window.setTimeout(
+                function () {
+                    $("#divPass").css('visibility', 'hidden');
+                },5000
+            );
+            
+        }
+
         //傳送座標、點擊次數至Server
         function sendGame() {
             //顯示座標
@@ -97,9 +111,11 @@
     </script>
 
     <div style="width:700px;">
-
+        <!--過關標語-->
+        <div id="divPass" style="background-color:orange;color:white;font-size:larger;"></div>
+        <!--顯示所有人的鼠標位置-->
         <div id="divRoom"></div>
-
+        <!--自己的鼠標位置-->
         <div id="divMe" style="background-color:yellow;"></div>
     </div>
     
