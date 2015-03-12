@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <script src="Scripts/jquery-1.6.4.min.js"></script>
+    <script src="Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="signalR/hubs"></script>
+</head>
+<body>    
+    <script>
+        var hub = $.connection.notifyHub;
+
+        $.connection.hub.start().done(function () {
+            hub.server.adminConnected();
+        });
+
+        hub.client.getList = function (users) {
+            $('#lstUser').empty();
+            $.each(users, function (i, user) {
+                var tr = "<tr>";
+                tr += "<td>" + user.name + "</td>";
+                tr += "<td><input id='txt"+user.id+"' type='textbox'/></td>";
+                tr += "<td><button onClick=\"sendNotify('"+user.id+"')\">發送</button></td>";
+                tr += "<\tr>";
+                $('#lstUser').append(tr);
+            });
+        };
+
+        function sendNotify(id) {
+            var message = $('#txt' + id).val();
+            hub.server.sendNotify(id, message);
+        };
+
+        //$(function () {
+        //    $('#btn'+)
+        //});
+    </script>
+
+    <h1>管理端</h1>
+    <table width="400" border="1" id="lstUser">
+    </table>
+</body>
+</html>

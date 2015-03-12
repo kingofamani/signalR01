@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <script src="Scripts/jquery-1.6.4.min.js"></script>
+    <script src="Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="signalR/hubs"></script>
+</head>
+<body>
+    <script>
+        var hub = $.connection.notifyHub;
+        var name = "";
+
+        $(function () {
+            name = Math.floor(Math.random()*10000+1) + "用戶";
+        });
+
+        $.connection.hub.start().done(function () {
+            hub.server.userConnected(name);
+        });
+
+        hub.client.showNotify = function (msg) {
+            $('#lstNotify').append('<li>'+msg+'</li>');
+        };
+
+
+    </script>
+
+    <ul id="lstNotify"></ul>
+</body>
+</html>
