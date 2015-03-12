@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <script src="Scripts/jquery-1.9.1.min.js"></script>
+    <script src="Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="signalR/hubs"></script>
+
+    <script src="Scripts/angular.min.js"></script>
+
+    <!--要獨立出service須import，參考https://github.com/JustMaier/angular-signalr-hub網站作法-->
+    <!--<script src="Scripts/angular-signalr-hub.min.js"></script>-->
+    <script>
+        var app = angular.module("App", []);        
+
+        app.controller("NotifyCtrl", ["$rootScope", "$scope", function ($rootScope,$scope) {
+            var hub = $.connection.notifyHub;
+            $scope.messages = [];
+
+            $scope.name = Math.floor(Math.random() * 10000 + 1) + "用戶";
+
+            $.connection.hub.start().done(function () {
+                hub.server.userConnected($scope.name);
+            });
+
+            hub.client.showNotify = function (msg) {
+                $scope.messages.push(msg);
+                $rootScope.$apply();//更新
+            };
+        }]);
+    </script>
+</head>
+
+<body ng-app="App" ng-controller="NotifyCtrl">    
+    <p>{{name}}</p>
+    <ul>
+        <li ng-repeat="msg in messages">{{msg}}</li>
+    </ul>
+</body>
+</html>

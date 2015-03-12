@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <script src="Scripts/jquery-1.9.1.min.js"></script>
+    <script src="Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="signalR/hubs"></script>
+
+    <script src="Scripts/angular.min.js"></script>
+    <script>
+        var app = angular.module("App", []);
+
+        app.controller("NotifyAdminCtrl", ["$rootScope", "$scope", function ($rootScope,$scope) {
+            var hub = $.connection.notifyHub;
+            $scope.users = [];
+
+            $.connection.hub.start().done(function () {
+                hub.server.adminConnected();
+            });
+
+            hub.client.getList = function (users) {
+                $scope.users = users;
+                $rootScope.$apply();//更新
+            };
+
+            $scope.sendNotify = function (id,msg) {
+                hub.server.sendNotify(id, msg);
+            };
+
+        }]);
+    </script>
+</head>
+
+<body ng-app="App" ng-controller="NotifyAdminCtrl">
+    <h1>管理端</h1>
+    <table width="400" border="1">
+        <tr ng-repeat="user in users">
+            <td>{{user.name}}</td>
+            <td><input type="text" ng-model="user.msg" /></td><!--user.msg動態加入-->
+            <td><button ng-click="sendNotify(user.id,user.msg)">發送</button></td>
+        </tr>
+    </table>
+</body>
+</html>
