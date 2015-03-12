@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>AngularJs.SignalR.Hub</id>
+    <version>1.4.0</version>
+    <title>Angular JS SignalR Hub</title>
+    <authors>Justin Maier</authors>
+    <owners>Justin Maier</owners>
+    <projectUrl>https://github.com/JustMaier/angular-signalr-hub</projectUrl>
+    <iconUrl>https://secure.gravatar.com/avatar/6e1b5ab3ef1593413f1bee4e5a6e6ae7?s=140&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-140.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A handy wrapper for SignalR Hubs. Just specify the hub name, listening functions, and methods that you're going to use.</description>
+    <summary>Handy AngularJS factory for SignalR Hubs</summary>
+    <releaseNotes>Added hubDisconnected listener</releaseNotes>
+    <language />
+    <tags>angularjs angular signalr jquery</tags>
+    <dependencies>
+      <dependency id="Microsoft.AspNet.SignalR" version="2.0.0" />
+    </dependencies>
+  </metadata>
+</package>
