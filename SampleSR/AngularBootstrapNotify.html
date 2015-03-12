@@ -4,12 +4,14 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title></title>
     <link href="Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="Content/toastr.min.css" rel="stylesheet" />
     <script src="Scripts/jquery-1.9.1.min.js"></script>
     <script src="Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script src="signalR/hubs"></script>
 
     <script src="Scripts/angular.min.js"></script>
     <script src="Scripts/bootstrap.min.js"></script>
+    <script src="Scripts/toastr.min.js"></script>
     <script>
         var app = angular.module("App", []);
 
@@ -24,12 +26,18 @@
             });
 
             hub.client.showNotify = function (msg) {
+                //載入訊息列表
                 var d = new Date();
                 var time = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
-                console.log(time);
                 $scope.messages.push({ content: msg, date: time });
                 $rootScope.$apply();//更新
             };
+
+            $scope.popUpNotify = function (msg) {
+                //彈跳訊息視窗
+                toastr.info(msg.content + '<br>時間:'+msg.date);
+            };
+
         }]);
     </script>
 </head>
@@ -59,7 +67,7 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-envelope"></span> 訊息<span class="label label-danger">{{messages.length}}</span><span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu" style="width:250px;">
                                 <!--列出所有訊息-->
-                                <li ng-repeat="msg in messages | limitTo:3 | orderBy:'-date' ">
+                                <li ng-repeat="msg in messages | limitTo:3 | orderBy:'-date' " ng-click="popUpNotify(msg)">
                                 <a href="#">
                                     <span class="glyphicon glyphicon-envelope"></span> 
                                     {{msg.content.substr(0,7)}}
