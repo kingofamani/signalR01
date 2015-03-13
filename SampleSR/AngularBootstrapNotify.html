@@ -5,6 +5,8 @@
     <title></title>
     <link href="Content/bootstrap.min.css" rel="stylesheet" />
     <link href="Content/toastr.min.css" rel="stylesheet" />
+    <!--參考http://daneden.github.io/animate.css-->
+    <link href="Content/animate.css" rel="stylesheet" />
     <script src="Scripts/jquery-1.9.1.min.js"></script>
     <script src="Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script src="signalR/hubs"></script>
@@ -30,7 +32,12 @@
                 var d = new Date();
                 var time = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
                 $scope.messages.push({ content: msg, date: time });
-                $rootScope.$apply();//更新
+
+                //通知動畫
+                $scope.isGetNotify = true;
+
+                //更新
+                $rootScope.$apply();
             };
 
             $scope.popUpNotify = function (msg) {
@@ -57,27 +64,32 @@
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li><a href="#"><span class="glyphicon glyphicon-home"></span> 前台:AngularJS + Bootstrap + SignalR</a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-home"></span> 前台:SignalR</a></li>
                 </ul>
                 
                 <ul class="nav navbar-nav navbar-right">
 
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-envelope"></span> 訊息<span class="label label-danger">{{messages.length}}</span><span class="caret"></span></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" ng-click="isGetNotify = false">
+                            <span class="glyphicon glyphicon-envelope" ng-class="{animated:isGetNotify, infinite:isGetNotify, swing:isGetNotify}"></span> 訊息
+                            <span class="label label-danger">{{messages.length}}</span>
+                            <span class="caret"></span>
+                            </a>
+
                             <ul class="dropdown-menu" role="menu" style="width:250px;">
                                 <!--列出所有訊息-->
-                                <li ng-repeat="msg in messages | limitTo:3 | orderBy:'-date' " ng-click="popUpNotify(msg)">
-                                <a href="#">
-                                    <span class="glyphicon glyphicon-envelope"></span> 
-                                    {{msg.content.substr(0,7)}}
-                                    <span ng-show="msg.content.length>7">...</span>
-                                    <span class="pull-right">{{msg.date}}</span>
+                                <li ng-repeat="msg in messages | orderBy:'-date' | limitTo:5 " ng-click="popUpNotify(msg)">
+                                    <a href="#">
+                                        <span class="glyphicon glyphicon-envelope"></span>
+                                        {{msg.content.substr(0,7)}}
+                                        <span ng-show="msg.content.length>7">...</span>
+                                        <span class="pull-right">{{msg.date}}</span>
                                     </a>
                                 </li>
 
-                                <li ng-show="messages.length >3" class="divider"></li>
-                                <li ng-show="messages.length >3"><center>查看更多<span class="glyphicon glyphicon-chevron-right"></span></center></li>
+                                <li ng-show="messages.length >5" class="divider"></li>
+                                <li ng-show="messages.length >5"><center>查看更多<span class="glyphicon glyphicon-chevron-right"></span></center></li>
                             </ul>
                         </li>
                     </ul>
@@ -92,7 +104,7 @@
             </div>
         </div>
     </nav>
-
+    
     <img src="images/sample.png" width="100%"/>
 
 
